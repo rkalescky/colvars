@@ -825,8 +825,8 @@ void colvar::build_atom_list(void)
   std::list<int> temp_id_list;
 
   for (size_t i = 0; i < cvcs.size(); i++) {
-    for (size_t j = 0; j < cvcs[i]->atom_groups.size(); j++) {
-      cvm::atom_group &ag = *(cvcs[i]->atom_groups[j]);
+    for (size_t j = 0; j < cvcs[i]->num_atom_groups(); j++) {
+      cvm::atom_group &ag = *(cvcs[i]->atom_groups(j));
       for (size_t k = 0; k < ag.size(); k++) {
         temp_id_list.push_back(ag[k].id);
       }
@@ -932,8 +932,8 @@ int colvar::parse_analysis(std::string const &conf)
 void colvar::setup() {
   // loop over all components to reset masses of all groups
   for (size_t i = 0; i < cvcs.size(); i++) {
-    for (size_t ig = 0; ig < cvcs[i]->atom_groups.size(); ig++) {
-      cvm::atom_group &atoms = *(cvcs[i]->atom_groups[ig]);
+    for (size_t ig = 0; ig < cvcs[i]->num_atom_groups(); ig++) {
+      cvm::atom_group &atoms = *(cvcs[i]->atom_groups(ig));
       atoms.setup();
       atoms.reset_mass(name,i,ig);
       atoms.read_positions();
@@ -1238,9 +1238,9 @@ int colvar::collect_cvc_gradients()
       cvm::real coeff = (cvcs[i])->sup_coeff * cvm::real((cvcs[i])->sup_np) *
         cvm::integer_power((cvcs[i])->value().real_value, (cvcs[i])->sup_np-1);
 
-      for (size_t j = 0; j < cvcs[i]->atom_groups.size(); j++) {
+      for (size_t j = 0; j < cvcs[i]->num_atom_groups(); j++) {
 
-        cvm::atom_group &ag = *(cvcs[i]->atom_groups[j]);
+        cvm::atom_group &ag = *(cvcs[i]->atom_groups(j));
 
         // If necessary, apply inverse rotation to get atomic
         // gradient in the laboratory frame

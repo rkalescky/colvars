@@ -357,8 +357,8 @@ colvar::h_bond::h_bond(std::string const &conf)
   cvm::atom acceptor = cvm::atom(a_num);
   cvm::atom donor    = cvm::atom(d_num);
   register_atom_group(new cvm::atom_group);
-  atom_groups[0]->add_atom(acceptor);
-  atom_groups[0]->add_atom(donor);
+  atom_groups(0)->add_atom(acceptor);
+  atom_groups(0)->add_atom(donor);
 
   get_keyval(conf, "cutoff",   r0, (3.3 * cvm::unit_angstrom()));
   get_keyval(conf, "expNumer", en, 6);
@@ -388,8 +388,8 @@ colvar::h_bond::h_bond(cvm::atom const &acceptor,
   x.type(colvarvalue::type_scalar);
 
   register_atom_group(new cvm::atom_group);
-  atom_groups[0]->add_atom(acceptor);
-  atom_groups[0]->add_atom(donor);
+  atom_groups(0)->add_atom(acceptor);
+  atom_groups(0)->add_atom(donor);
 }
 
 
@@ -403,7 +403,7 @@ colvar::h_bond::h_bond()
 
 colvar::h_bond::~h_bond()
 {
-  delete atom_groups[0];
+  delete atom_groups(0);
 }
 
 
@@ -413,8 +413,8 @@ void colvar::h_bond::calc_value()
   cvm::rvector const r0_vec(0.0); // TODO enable the flag?
   x.real_value =
     coordnum::switching_function<flags>(r0, r0_vec, en, ed,
-                                        (*atom_groups[0])[0],
-                                        (*atom_groups[0])[1],
+                                        (*atom_groups(0))[0],
+                                        (*atom_groups(0))[1],
                                         NULL, 0.0);
 }
 
@@ -424,15 +424,15 @@ void colvar::h_bond::calc_gradients()
   int const flags = coordnum::ef_gradients;
   cvm::rvector const r0_vec(0.0); // TODO enable the flag?
   coordnum::switching_function<flags>(r0, r0_vec, en, ed,
-                                      (*atom_groups[0])[0],
-                                      (*atom_groups[0])[1],
+                                      (*atom_groups(0))[0],
+                                      (*atom_groups(0))[1],
                                       NULL, 0.0);
 }
 
 
 void colvar::h_bond::apply_force(colvarvalue const &force)
 {
-  (atom_groups[0])->apply_colvar_force(force);
+  (atom_groups(0))->apply_colvar_force(force);
 }
 
 

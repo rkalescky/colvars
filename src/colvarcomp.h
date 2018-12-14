@@ -12,6 +12,7 @@
 // this can be done straightforwardly by using the macro:
 // simple_scalar_dist_functions (derived_class)
 
+#include <vector>
 
 #include "colvarmodule.h"
 #include "colvar.h"
@@ -232,20 +233,31 @@ public:
   /// \brief Wrap value (for periodic/symmetric cvcs)
   virtual void wrap(colvarvalue &x) const;
 
-  /// \brief Pointers to all atom groups, to let colvars collect info
-  /// e.g. atomic gradients
-  std::vector<cvm::atom_group *> atom_groups;
-
-  /// \brief Store a pointer to new atom group, and list as child for dependencies
-  inline void register_atom_group(cvm::atom_group *ag) {
-    atom_groups.push_back(ag);
-    add_child((colvardeps *) ag);
+  /// Get the total number of atom groups
+  inline size_t numagroups() const
+  {
+    return agroups.size();
   }
 
-  /// \brief Whether or not this CVC will be computed in parallel whenever possible
-  bool b_try_scalable;
+  /// Access the i-th atom group
+  inline cvm::atom_group * atom_groups(int i) const
+  {
+    return agroups[i];
+  }
 
 protected:
+
+  /// \brief Pointers to all atom groups, to let colvars collect info
+  /// e.g. atomic gradients
+  std::vector<cvm::atom_group *> agroups;
+
+  /// \brief Store a pointer to an atom group, and list as child for
+  /// dependencies
+  void register_atom_group(cvm::atom_group *ag);
+
+  /// \brief Whether or not this CVC will be computed in parallel whenever
+  /// possible
+  bool b_try_scalable;
 
   /// \brief Cached value
   colvarvalue x;

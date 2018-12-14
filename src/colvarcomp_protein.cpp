@@ -72,9 +72,9 @@ colvar::alpha_angles::alpha_angles(std::string const &conf)
       theta.push_back(new colvar::angle(cvm::atom(r[i  ], "CA", sid),
                                         cvm::atom(r[i+1], "CA", sid),
                                         cvm::atom(r[i+2], "CA", sid)));
-      register_atom_group(theta.back()->atom_groups[0]);
-      register_atom_group(theta.back()->atom_groups[1]);
-      register_atom_group(theta.back()->atom_groups[2]);
+      register_atom_group(theta.back()->atom_groups(0));
+      register_atom_group(theta.back()->atom_groups(1));
+      register_atom_group(theta.back()->atom_groups(2));
     }
 
   } else {
@@ -94,7 +94,7 @@ colvar::alpha_angles::alpha_angles(std::string const &conf)
         hb.push_back(new colvar::h_bond(cvm::atom(r[i  ], "O",  sid),
                                         cvm::atom(r[i+4], "N",  sid),
                                         r0, en, ed));
-        register_atom_group(hb.back()->atom_groups[0]);
+        register_atom_group(hb.back()->atom_groups(0));
       }
 
     } else {
@@ -341,19 +341,19 @@ colvar::dihedPC::dihedPC(std::string const &conf)
                                          cvm::atom(r[i  ], "CA", sid),
                                          cvm::atom(r[i  ], "C", sid),
                                          cvm::atom(r[i+1], "N", sid)));
-    register_atom_group(theta.back()->atom_groups[0]);
-    register_atom_group(theta.back()->atom_groups[1]);
-    register_atom_group(theta.back()->atom_groups[2]);
-    register_atom_group(theta.back()->atom_groups[3]);
+    register_atom_group(theta.back()->atom_groups(0));
+    register_atom_group(theta.back()->atom_groups(1));
+    register_atom_group(theta.back()->atom_groups(2));
+    register_atom_group(theta.back()->atom_groups(3));
     // Phi (next res)
     theta.push_back(new colvar::dihedral(cvm::atom(r[i  ], "C", sid),
                                          cvm::atom(r[i+1], "N", sid),
                                          cvm::atom(r[i+1], "CA", sid),
                                          cvm::atom(r[i+1], "C", sid)));
-    register_atom_group(theta.back()->atom_groups[0]);
-    register_atom_group(theta.back()->atom_groups[1]);
-    register_atom_group(theta.back()->atom_groups[2]);
-    register_atom_group(theta.back()->atom_groups[3]);
+    register_atom_group(theta.back()->atom_groups(0));
+    register_atom_group(theta.back()->atom_groups(1));
+    register_atom_group(theta.back()->atom_groups(2));
+    register_atom_group(theta.back()->atom_groups(3));
   }
 
   if (cvm::debug())

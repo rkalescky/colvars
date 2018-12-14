@@ -102,10 +102,8 @@ int colvar::cvc::init_total_force_params(std::string const &conf)
 
   if (! is_enabled(f_cvc_one_site_total_force)) {
     // check whether any of the other atom groups is dummy
-    std::vector<cvm::atom_group *>::iterator agi = atom_groups.begin();
-    agi++;
-    for ( ; agi != atom_groups.end(); agi++) {
-      if ((*agi)->b_dummy) {
+    for (int i = 0; i < num_atom_groups(); i++) {
+      if (atom_groups(i)->b_dummy) {
         provide(f_cvc_inv_gradient, false);
         provide(f_cvc_Jacobian, false);
       }
@@ -180,16 +178,20 @@ colvar::cvc::~cvc()
 {
   free_children_deps();
   remove_all_children();
-  for (size_t i = 0; i < atom_groups.size(); i++) {
-    if (atom_groups[i] != NULL) delete atom_groups[i];
+  for (size_t i = 0; i < agroups.size(); i++) {
+    if (agroups[i] != NULL) {
+      delete agroups[i];
+      agroups[i] = NULL;
+    }
   }
 }
+
 
 void colvar::cvc::read_data()
 {
   size_t ig;
-  for (ig = 0; ig < atom_groups.size(); ig++) {
-    cvm::atom_group &atoms = *(atom_groups[ig]);
+  for (ig = 0; ig < num_atom_groups(); ig++) {
+    cvm::atom_group &atoms = *(atom_groups(ig));
     atoms.reset_atoms_data();
     atoms.read_positions();
     atoms.calc_required_properties();
@@ -199,8 +201,8 @@ void colvar::cvc::read_data()
 ////  Don't try to get atom velocities, as no back-end currently implements it
 //   if (tasks[task_output_velocity] && !tasks[task_fdiff_velocity]) {
 //     for (i = 0; i < cvcs.size(); i++) {
-//       for (ig = 0; ig < cvcs[i]->atom_groups.size(); ig++) {
-//         cvcs[i]->atom_groups[ig]->read_velocities();
+//       for (ig = 0; ig < cvcs[i]->num_atom_groups(); ig++) {
+//         cvcs[i]->atom_groups(ig)->read_velocities();
 //       }
 //     }
 //   }
@@ -225,8 +227,8 @@ void colvar::cvc::calc_Jacobian_derivative()
 
 void colvar::cvc::calc_fit_gradients()
 {
-  for (size_t ig = 0; ig < atom_groups.size(); ig++) {
-    atom_groups[ig]->calc_fit_gradients();
+  for (size_t ig = 0; ig < num_atom_groups(); ig++) {
+    atom_groups(ig)->calc_fit_gradients();
   }
 }
 
@@ -240,8 +242,8 @@ void colvar::cvc::debug_gradients()
 
   cvm::log("Debugging gradients for " + description);
 
-  for (size_t ig = 0; ig < atom_groups.size(); ig++) {
-    cvm::atom_group *group = atom_groups[ig];
+  for (size_t ig = 0; ig < num_atom_groups(); ig++) {
+    cvm::atom_group *group = atom_groups(ig);
     if (group->b_dummy) continue;
 
     cvm::rotation const rot_0 = group->rot;
@@ -374,6 +376,13 @@ colvarvalue colvar::cvc::dist2_rgrad(colvarvalue const &x1,
 void colvar::cvc::wrap(colvarvalue &x) const
 {
   return;
+}
+
+
+void colvar::cvc::register_atom_group(cvm::atom_group *ag) 
+{
+  agroups.push_back(ag);
+  add_child((colvardeps *) ag);
 }
 
 
