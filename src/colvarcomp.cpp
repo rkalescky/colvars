@@ -65,7 +65,7 @@ int colvar::cvc::init(std::string const &conf)
   get_keyval(conf, "period", period, period);
   get_keyval(conf, "wrapAround", wrap_center, wrap_center);
 
-  get_keyval_feature(dynamic_cast<colvarparse *>(this), conf, "debugGradients",
+  get_keyval_feature(this, conf, "debugGradients",
                      f_cvc_debug_gradient, false, parse_silent);
 
   bool b_no_PBC = !is_enabled(f_cvc_pbc_minimum_image); // Enabled by default
@@ -379,7 +379,7 @@ void colvar::cvc::wrap(colvarvalue &x) const
 }
 
 
-void colvar::cvc::register_atom_group(cvm::atom_group *ag) 
+void colvar::cvc::register_atom_group(cvm::atom_group *ag)
 {
   agroups.push_back(ag);
   add_child((colvardeps *) ag);
