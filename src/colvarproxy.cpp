@@ -784,12 +784,12 @@ int colvarproxy_io::remove_file(char const *filename)
   std::string const renamed_file(std::string(filename)+".old");
   if (std::remove(renamed_file.c_str())) {
     if (errno != ENOENT) {
-      return cvm::error("Error: in removing file \""+std::string(renamed_file)+
+      return cvm::error("Error: in removing file \""+renamed_file+
                         "\".\n.",
                         FILE_ERROR);
     }
   }
-  return rename_file(filename, renamed_file);
+  return rename_file(filename, renamed_file.c_str());
 #else
   if (std::remove(filename)) {
     if (errno != ENOENT) {
